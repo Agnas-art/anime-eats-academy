@@ -22,23 +22,49 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Build system prompt with enhanced context
-    let systemPrompt = "You are a friendly and helpful AI assistant. Keep your responses concise and conversational since they will be spoken aloud. Be warm, engaging, and helpful. Limit responses to 2-3 sentences when possible.";
+    // Build system prompt with enhanced context awareness
+    let systemPrompt = `You are a friendly and helpful AI assistant in a voice conversation. Keep your responses concise and conversational since they will be spoken aloud. Be warm, engaging, and helpful. Limit responses to 2-3 sentences when possible.
+
+IMPORTANT CONTEXT RULES:
+1. Remember previous parts of this conversation - refer back to topics we've discussed
+2. Don't ask questions that were already answered in our conversation
+3. Build upon previous responses rather than starting fresh each time
+4. If the user mentions their name, remember and use it appropriately
+5. Reference shared interests and topics from our conversation history
+6. Acknowledge when continuing a previous discussion topic
+
+Be conversational and maintain context throughout our chat.`;
     
     if (isInternalSummary) {
-      systemPrompt = "Create a brief 1-2 sentence summary of this conversation to maintain context for future messages. Focus on key topics and user preferences discussed.";
+      systemPrompt = "Create a brief 1-2 sentence summary of this conversation to maintain context for future messages. Focus on key topics, user preferences, and personal details (like names) discussed. Include any ongoing themes or interests.";
     } else if (conversationSummary) {
-      systemPrompt += ` Previous conversation context: ${conversationSummary}`;
+      systemPrompt += `\n\nPREVIOUS CONVERSATION SUMMARY: ${conversationSummary}\n\nUse this context to maintain conversation continuity and avoid repeating questions or topics already covered.`;
     }
 
-    const messages = [
+    // Prepare messages with better context structure
+    const contextMessages = [
       { 
         role: "system", 
         content: systemPrompt
-      },
-      ...(conversationHistory || []),
-      { role: "user", content: message }
+      }
     ];
+
+    // Add conversation history with better formatting
+    if (conversationHistory && conversationHistory.length > 0) {
+      // Take more context for better conversation flow
+      const recentHistory = conversationHistory.slice(-15); // Increased from default
+      contextMessages.push(...recentHistory);
+    }
+
+    // Add the current message
+    contextMessages.push({ role: "user", content: message });
+
+    console.log("Messages being sent to AI:", {
+      totalMessages: contextMessages.length,
+      hasHistory: conversationHistory?.length > 0,
+      hasSummary: !!conversationSummary,
+      systemPromptLength: systemPrompt.length
+    });
 
     console.log("Calling Lovable AI Gateway...");
     
@@ -50,7 +76,9 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
-        messages,
+        messages: contextMessages,
+        temperature: 0.7, // Add slight creativity while maintaining consistency
+        max_tokens: 150,   // Limit response length for voice conversation
       }),
     });
 

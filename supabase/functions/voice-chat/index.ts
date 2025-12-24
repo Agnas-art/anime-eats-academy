@@ -11,20 +11,30 @@ serve(async (req) => {
   }
 
   try {
-    const { message, conversationHistory } = await req.json();
+    const { message, conversationHistory, conversationSummary, isInternalSummary } = await req.json();
     
     console.log("Received message:", message);
     console.log("Conversation history length:", conversationHistory?.length || 0);
+    console.log("Has conversation summary:", !!conversationSummary);
     
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
+    // Build system prompt with enhanced context
+    let systemPrompt = "You are a friendly and helpful AI assistant. Keep your responses concise and conversational since they will be spoken aloud. Be warm, engaging, and helpful. Limit responses to 2-3 sentences when possible.";
+    
+    if (isInternalSummary) {
+      systemPrompt = "Create a brief 1-2 sentence summary of this conversation to maintain context for future messages. Focus on key topics and user preferences discussed.";
+    } else if (conversationSummary) {
+      systemPrompt += ` Previous conversation context: ${conversationSummary}`;
+    }
+
     const messages = [
       { 
         role: "system", 
-        content: "You are a friendly and helpful AI assistant. Keep your responses concise and conversational since they will be spoken aloud. Be warm, engaging, and helpful. Limit responses to 2-3 sentences when possible." 
+        content: systemPrompt
       },
       ...(conversationHistory || []),
       { role: "user", content: message }

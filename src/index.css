@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka:wght@400;500;600;700&display=swap');
+
+@layer base {
+  :root {
+    --background: 35 100% 98%;
+    --foreground: 25 30% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 25 30% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 30% 20%;
+
+    --primary: 15 90% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 50% 55%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 35 30% 92%;
+    --muted-foreground: 25 20% 45%;
+
+    --accent: 340 75% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 35 30% 88%;
+    --input: 35 30% 88%;
+    --ring: 15 90% 60%;
+
+    --radius: 1rem;
+
+    /* Custom tokens */
+    --kawaii-yellow: 45 100% 70%;
+    --kawaii-pink: 340 80% 75%;
+    --kawaii-blue: 200 80% 70%;
+    --kawaii-purple: 270 60% 70%;
+    --kawaii-mint: 160 60% 75%;
+
+    --gradient-sunny: linear-gradient(135deg, hsl(45, 100%, 70%) 0%, hsl(15, 90%, 60%) 100%);
+    --gradient-fresh: linear-gradient(135deg, hsl(160, 60%, 75%) 0%, hsl(160, 50%, 55%) 100%);
+    --gradient-candy: linear-gradient(135deg, hsl(340, 80%, 75%) 0%, hsl(270, 60%, 70%) 100%);
+    --gradient-sky: linear-gradient(135deg, hsl(200, 80%, 70%) 0%, hsl(270, 60%, 70%) 100%);
+
+    --shadow-kawaii: 0 8px 30px -5px hsl(15 90% 60% / 0.25);
+    --shadow-card: 0 4px 20px -2px hsl(25 30% 20% / 0.08);
+    --shadow-float: 0 12px 40px -8px hsl(25 30% 20% / 0.15);
+
+    --font-display: 'Fredoka', sans-serif;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  .dark {
+    --background: 25 25% 10%;
+    --foreground: 35 30% 95%;
+
+    --card: 25 20% 15%;
+    --card-foreground: 35 30% 95%;
+
+    --popover: 25 20% 15%;
+    --popover-foreground: 35 30% 95%;
+
+    --primary: 15 85% 55%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 45% 45%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 25 15% 20%;
+    --muted-foreground: 35 20% 65%;
+
+    --accent: 340 70% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --border: 25 15% 25%;
+    --input: 25 15% 25%;
+    --ring: 15 85% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@layer components {
+  .bubble-text {
+    @apply relative inline-block;
+    text-shadow: 2px 2px 0 hsl(var(--primary) / 0.2);
+  }
+
+  .kawaii-bounce {
+    animation: kawaii-bounce 2s ease-in-out infinite;
+  }
+
+  .kawaii-float {
+    animation: kawaii-float 3s ease-in-out infinite;
+  }
+
+  .kawaii-wiggle {
+    animation: kawaii-wiggle 0.5s ease-in-out;
+  }
+
+  .kawaii-pulse {
+    animation: kawaii-pulse 2s ease-in-out infinite;
+  }
+}
+
+@keyframes kawaii-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes kawaii-float {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-8px) rotate(2deg); }
+}
+
+@keyframes kawaii-wiggle {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+@keyframes kawaii-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}

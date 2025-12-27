@@ -813,8 +813,20 @@ Recent conversation context:\n`;
           localStorage.setItem('voicebot_fallback_notified', 'true');
         }
         
-        // Local fallback response
-        const localResponse = await generateLocalResponse(text, recentMessages);
+        // 💾 COMPLETE HISTORY DEBUG: Load stored conversation and merge with current session
+        const storedContext = JSON.parse(localStorage.getItem('voicebot_conversation') || '{}');
+        const fullMessageHistory = storedContext.messages || [];
+        const completeHistory = [...fullMessageHistory, ...updatedMessages];
+        
+        console.log('💾 COMPLETE HISTORY DEBUG:', {
+          storedMessageCount: fullMessageHistory.length,
+          currentSessionCount: updatedMessages.length,
+          totalHistoryCount: completeHistory.length,
+          willUseCompleteHistory: true
+        });
+        
+        // Local fallback response with complete conversation history
+        const localResponse = await generateLocalResponse(text, completeHistory);
         const assistantMessage: Message = { 
           role: 'assistant', 
           content: localResponse,

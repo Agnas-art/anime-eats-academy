@@ -727,9 +727,10 @@ Recent conversation context:\n`;
     setIsProcessing(true);
     setCurrentResponse('');
 
+    // Prepare enhanced context with conversation analysis (define outside try/catch)
+    const recentMessages = updatedMessages.slice(-CONTEXT_WINDOW);
+
     try {
-      // Prepare enhanced context with conversation analysis
-      const recentMessages = updatedMessages.slice(-CONTEXT_WINDOW);
       
       // Analyze conversation for better context
       const allContent = updatedMessages.map(m => m.content.toLowerCase()).join(' ');
